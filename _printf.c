@@ -5,90 +5,46 @@
  * @format: character string
  * @...: arguments
  * Return: number of characters printed
-*/
+ */
 int _printf(const char *format, ...)
 {
 va_list args;
-int i;
-int d;
-unsigned int u;
-unsigned int o;
-unsigned int x;
-void *p;
-char c, *s;
-i = 0;
+int count;
 va_start(args, format);
-while (*format)
+while (*format != '\0')
 {
 if (*format == '%')
 {
 format++;
-switch (*format)
+if (*format == 's')
 {
-case 'c':
-c = (char)va_arg(args, int);
-_putchar(c);
-i++;
-break;
-case 's':
-s = va_arg(args, char*);
-while (*s)
+const char *str = va_arg(args, const char *);
+while (*str != '\0')
 {
-_putchar(*s);
-i++;
-s++;
+putchar(*str);
+count++;
+str++;
 }
-break;
-case 'd':
-case 'i':
-d = va_arg(args, int);
-if (d < 0)
-{
-_putchar('-');
-i++;
-d = -d;
 }
-i += print_number(d);
-break;
-case 'u':
-u = va_arg(args, unsigned int);
-i += print_unsigned_number(u);
-break;
-case 'o':
-o = va_arg(args, unsigned int);
-i += print_octal_number(o);
-break;
-case 'x':
-x = va_arg(args, unsigned int);
-i += print_hexadecimal_number(x, 'a');
-break;
-case 'X':
-x = va_arg(args, unsigned int);
-i += print_hexadecimal_number(x, 'A');
-break;
-case 'p':
-p = va_arg(args, void *);
-i += print_address(p);
-break;
-case '%':
-_putchar('%');
-i++;
-break;
-default:
-_putchar('%');
-_putchar(*format);
-i += 2;
-break;
+else if (*format == 'c')
+{
+char c = (char) va_arg(args, int);
+putchar(c);
+count++;
+}
+else if (*format == '%')
+{
+putchar('%');
+count++;
 }
 }
 else
 {
-_putchar(*format);
-i++;
+putchar(*format);
+count++;
 }
 format++;
 }
 va_end(args);
-return (i);
+return (count);
 }
-

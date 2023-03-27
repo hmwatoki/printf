@@ -2,78 +2,94 @@
 #include <stdarg.h>
 #include "main.h"
 /**
- * print_number - prints an integer using _putchar
- *
- * @n: the integer to print
- *
- * Return: void
- */
-void print_number(int n)
-{
-    if (n < 0) {
-        _putchar('-');
-        n = -n;
-    }
-    if (n > 9) {
-        print_number(n / 10);
-    }
-    _putchar(n % 10 + '0');
-}
-/**
  * _printf - A function that prints a formatted string to stdout
  * @format: The format string to be printed
  * Return: The number of characters printed
  */
 int _printf(const char *format, ...)
 {
-    if (format == NULL)
-    {
-       return (-1);
-    }
-
-    int count = 0;
-    va_list args;
-
-    va_start(args, format);
-
-    while (*format)
-    {
-        if (*format == '%')
-        {
-            format++;
-
-            switch (*format)
-            {
-                case 'c':
-                    _putchar(va_arg(args, int));
-                    count++;
-                    break;
-                case 's':
-                    count += _puts(va_arg(args, char *));
-                    break;
-		case 'd':
-                case 'i':
-                    print_number(va_arg(args, int));
-                    count++;
-                    break;
-                case '%':
-                    _putchar('%');
-                    count++;
-                    break;
-                default:
-                    /* unsupported conversion specifier, ignore it */
-                    break;
-            }
-        }
-        else
-        {
-            _putchar(*format);
-            count++;
-        }
-        format++;
-    }
-
-    va_end(args);
-
-    return (count);
+if (format == NULL)
+{
+return (-1);
+}
+int count = 0;
+va_list args;
+va_start(args, format);
+while (*format)
+{
+if (*format == '%')
+{
+format++;
+int i = 0;
+char *specifier = "csdi%";
+void (*print_fn[])(va_list) = {_print_c, _print_s, _printi, _printi, _print_p};
+while (specifier[i])
+{
+if (*format == specifier[i])
+{
+print_fn[i](args);
+count++;
+break;
+}
+i++;
+}
+if (!specifier[i])
+{
+/* unsupported conversion specifier, ignore it */
+_putchar('%');
+}
+}
+else
+{
+_putchar(*format);
+count++;
+}
+format++;
+}
+va_end(args);
+return (count);
+}
+/**
+ * _print_c - prints a single character
+ *
+ * @args: arguments list
+ *
+ * Return: void
+ */
+void _print_c(va_list args)
+{
+_putchar(va_arg(args, int));
+}
+/**
+ * _print_s - prints a string
+ *
+ * @args: arguments list
+ *
+ * Return: number of characters printed
+ */
+void _print_s(va_list args)
+{
+count += _puts(va_arg(args, char *));
+}
+/**
+ * _printi - prints an integer
+ *
+ * @args: arguments list
+ *
+ * Return: void
+ */
+void _printi(va_list args)
+{
+print_number(va_arg(args, int));
+}
+/**
+ * _print_p - prints a percent character
+ *
+ * @args: arguments list
+ *
+ * Return: void
+ */
+void _print_p(va_list args)
+{
+_putchar('%');
 }

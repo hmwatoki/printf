@@ -8,21 +8,23 @@
  */
 int _printf(const char *format, ...)
 {
+int count;
+int i;
+char *specifier = "csdi%";
+void (*print_fn[])(va_list) = {_print_c, _print_s, _printi, _printi, _print_p};
+va_list args;
+va_start(args, format);
+i = 0;
+count = 0;
 if (format == NULL)
 {
 return (-1);
 }
-int count = 0;
-va_list args;
-va_start(args, format);
 while (*format)
 {
 if (*format == '%')
 {
 format++;
-int i = 0;
-char *specifier = "csdi%";
-void (*print_fn[])(va_list) = {_print_c, _print_s, _printi, _printi, _print_p};
 while (specifier[i])
 {
 if (*format == specifier[i])
@@ -69,6 +71,8 @@ _putchar(va_arg(args, int));
  */
 void _print_s(va_list args)
 {
+int count;
+count = 0;
 count += _puts(va_arg(args, char *));
 }
 /**
@@ -89,7 +93,7 @@ print_number(va_arg(args, int));
  *
  * Return: void
  */
-void _print_p(va_list args)
+void _print_p(va_list args __attribute__((unused)))
 {
 _putchar('%');
 }

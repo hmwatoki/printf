@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #include "main.h"
 /**
  * _printf - A function that prints a formatted string to stdout
@@ -8,46 +9,45 @@
  */
 int _printf(const char *format, ...)
 {
-if (format == NULL)
-{
-return (-1);
-}
-int count = 0;
 va_list args;
-va_start(args, format);
-while (*format)
-{
-if (*format == '%')
-{
-format++;
-int i = 0;
+int i = 0, j = 0, len = 0;
+char *buf;
 char *specifier = "csdi%";
-void (*print_fn[])(va_list) = {_print_c, _print_s, _printi, _printi, _print_p};
-while (specifier[i])
+void (*print_fn[])(va_list) = {_print_c, _print_s, _printi,
+_printi,
+_print_p
+};
+buf = malloc(sizeof(char) * 1024);
+if (!buf)
+return (-1);
+va_start(args, format);
+while (format && format[i])
 {
-if (*format == specifier[i])
+if (format[i] == '%')
 {
-print_fn[i](args);
-count++;
+j = 0;
+i++;
+while (specifier[j])
+{
+if (format[i] == specifier[j])
+{
+print_fn[j](args);
 break;
+}
+j++;
 }
 i++;
 }
-if (!specifier[i])
-{
-/* unsupported conversion specifier, ignore it */
-_putchar('%');
-}
-}
 else
 {
-_putchar(*format);
-count++;
+_putchar(format[i]);
+len++;
+i++;
 }
-format++;
 }
 va_end(args);
-return (count);
+free(buf);
+return (len);
 }
 /**
  * _print_c - prints a single character
@@ -69,6 +69,8 @@ _putchar(va_arg(args, int));
  */
 void _print_s(va_list args)
 {
+int count;
+count = 0;
 count += _puts(va_arg(args, char *));
 }
 /**
@@ -89,7 +91,7 @@ print_number(va_arg(args, int));
  *
  * Return: void
  */
-void _print_p(va_list args)
+void _print_p(va_list args __attribute__((unused)))
 {
 _putchar('%');
 }
